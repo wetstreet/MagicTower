@@ -2,6 +2,7 @@
 #define MANAGER_H
 
 #include <Windows.h>
+#include <sstream>
 #include "definitions.h"
 #include "map.h"
 #include "object.h"
@@ -12,6 +13,7 @@
 #include "downstairs.h"
 #include "door.h"
 #include "key.h"
+using namespace std;
 
 //结点保存object类对象，object类中包含位图及对应的名字
 struct node{
@@ -68,12 +70,14 @@ public:
 	void Fight(HWND, int, int, int);
 	void DrawMap(HDC hdc, MapManager *mm);
 	void PrintInfo(HDC hdc);
+	void PrintMessage(HDC hdc, int x, int y, wchar_t *msg, int number);
 private:
 	int length;
 	node *head;
 	HINSTANCE hInstance;
 };
 
+//在manager类初始化时注册各个对象
 void Manager::Initialize()
 {
 	addElement(-2, IDB_PLAYER, TYPE_PLAYER);
@@ -164,13 +168,21 @@ void Manager::DrawMap(HDC hdc, MapManager *mm){
 }
 
 void Manager::PrintInfo(HDC hdc){
-	LPCWSTR buffer = nullptr;
-	char b[20];
-	TextOut(hdc, 650, 100, buffer, sprintf_s(b, "生命值:%d", 1));
-	TextOut(hdc, 650, 120, buffer, sprintf_s(b, "攻击力:%d", 1));
-	TextOut(hdc, 650, 140, buffer, sprintf_s(b, "防御力:%d", 1));
-	TextOut(hdc, 650, 160, buffer, sprintf_s(b, "金钱:%d", 1));
-	TextOut(hdc, 650, 180, buffer, sprintf_s(b, "钥匙:%d", 1));
+	Player *p = getPlayer();
+	PrintMessage(hdc, 650, 100, L"攻击力：", p->getAttack());
+	PrintMessage(hdc, 650, 120, L"防御力：", p->getDefense());
+	PrintMessage(hdc, 650, 140, L"金钱：", p->getMoney());
+	PrintMessage(hdc, 650, 160, L"钥匙：", p->getKey());
+}
+
+void Manager::PrintMessage(HDC hdc, int x, int y, wchar_t *msg, int number){
+	wstringstream stream;
+	wstring s, temp;
+	s = msg;
+	stream << number;
+	stream >> temp;
+	s = s + temp;
+	TextOut(hdc, x, y, s.c_str(), s.length());
 }
 
 #endif

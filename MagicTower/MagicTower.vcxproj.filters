@@ -65,6 +65,9 @@
     <ClInclude Include="downstairs.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

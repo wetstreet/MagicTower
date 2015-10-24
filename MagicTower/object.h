@@ -4,6 +4,7 @@
 #include "bitmap.h"
 #include "definitions.h"
 #include "map.h"
+#include "window.h"
 
 class Object{
 public:
@@ -16,7 +17,7 @@ public:
 	virtual void setKey(int i){}
 	virtual void Paint(HDC hdc, int x, int y){ if (picture) picture->BitBlt(hdc, g_x + 50 * x, g_y + 50 * y); }
 	//当物体碰到玩家时执行的函数
-	virtual void MeetPlayer(int floor, int x, int y, Object *p, MapManager *m){}
+	virtual void MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){}
 private:
 	const int g_x = 13;
 	const int g_y = 12;

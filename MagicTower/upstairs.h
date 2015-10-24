@@ -7,13 +7,13 @@
 class Upstairs :public Object{
 public:
 	Upstairs(int id, UINT resourceId, HINSTANCE hIns) :Object(id, resourceId, hIns){}
-	void MeetPlayer(int floor, int x, int y, Object *p, MapManager *m);
+	void MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm);
 };
 
-void Upstairs::MeetPlayer(int floor, int x, int y, Object *p, MapManager *m){
+void Upstairs::MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){
 	p->setX(x);
 	p->setY(y);
-	m->GoUp();
+	mm->GoUp();
 }
 
 #endif

@@ -1,8 +1,9 @@
 ﻿#include "resource.h"
 #include "definitions.h"
 #include "manager.h"
-#include "general.h"
 #include "map.h"
+#include "window.h"
+#include "general.h"
 #include "input.h"
 
 HINSTANCE hIns;
@@ -11,6 +12,7 @@ TCHAR szWindowClass[100];			// 主窗口类名
 
 Manager *manager;
 MapManager *mm;
+WindowManager *wm;
 WindowUpdator *windowUpdator;
 /*
 Enemy monster_properties[9] = {
@@ -28,8 +30,8 @@ void func(HWND, int);
 ATOM	MyRegisterClass(HINSTANCE);
 BOOL	InitInstance(HINSTANCE, int);
 LRESULT	CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
-//LRESULT	CALLBACK ABOUT(HWND, UINT, WPARAM, LPARAM);
 LRESULT	CALLBACK FIGHT(HWND, UINT, WPARAM, LPARAM);
+//LRESULT	CALLBACK ABOUT(HWND, UINT, WPARAM, LPARAM);
 //LRESULT	CALLBACK EDITOR(HWND, UINT, WPARAM, LPARAM);
 LRESULT	CALLBACK Shop(HWND, UINT, WPARAM, LPARAM);
 
@@ -117,14 +119,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_CREATE:
 		windowUpdator = new WindowUpdator(hwnd);
 		mm = new MapManager;
+		wm = new WindowManager(manager->getHIns(), hwnd);
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		manager->DrawMap(hdc, mm);
+		manager->PrintInfo(hdc);
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_KEYDOWN:
-		KeyDown(manager, wparam, mm);
+		KeyDown(manager, wparam, mm, wm);
 		windowUpdator->Update();
 		break;
 	case WM_COMMAND:
@@ -148,18 +152,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 	return 0;
 }
-/*
+
 LRESULT CALLBACK FIGHT(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
-	LPCWSTR buffer;
-	char b[20];
-	static Enemy m = *pMp;
+	//static Enemy m = *pMp;
 
 	switch (msg)
 	{
 	case WM_INITDIALOG:
+		/*
 		m.hp = pMp->hp;
 		SetTimer(hwnd, 1, 300, NULL);
 		if (sprintf(b, "%d", m.hp))
@@ -173,20 +176,28 @@ LRESULT CALLBACK FIGHT(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		if (sprintf(b, "%d", atk))
 			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_ATTACK), buffer);
 		if (sprintf(b, "%d", dfs))
-			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_DEFENSE), buffer);
-		return TRUE;
+			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_DEFENSE), buffer);*/
+		//return TRUE;
+		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
+		/*
 		pBitmap->BitBlt(hdc, 76, 47);
 		if (sprintf(buffer, "%d", m.hp))
 			SetWindowText(GetDlgItem(hwnd, IDC_MONSTER_HEALTH), buffer);
 		if (sprintf(buffer, "%d", hp))
-			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_HEALTH), buffer);
+			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_HEALTH), buffer);*/
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_COMMAND:
+		if (LOWORD(wparam) == IDC_CLOSE)
+		{
+			EndDialog(hwnd, LOWORD(wparam));
+			return TRUE;
+		}
 		break;
 	case WM_TIMER:
+		/*
 		m.hp -= (atk - m.dfs);
 		if (m.hp <= 0)
 		{
@@ -196,11 +207,12 @@ LRESULT CALLBACK FIGHT(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		}
 		else
 			hp -= (m.atk - dfs);
-		windowUpdator->Update();
+		windowUpdator->Update();*/
 		return TRUE;
 	}
 	return FALSE;
-}*/
+}
+
 /*
 LRESULT CALLBACK EDITOR(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
