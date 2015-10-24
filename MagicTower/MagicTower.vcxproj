@@ -213,19 +213,22 @@
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="definitions.h" />
+    <ClInclude Include="door.h" />
+    <ClInclude Include="downstairs.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="general.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="key.h" />
     <ClInclude Include="manager.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="resource1.h" />
+    <ClInclude Include="road.h" />
+    <ClInclude Include="upstairs.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
-    <ResourceCompile Include="Resource1.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\background.bmp">

@@ -3,6 +3,7 @@
 #include "manager.h"
 #include "general.h"
 #include "map.h"
+#include "input.h"
 
 HINSTANCE hIns;
 TCHAR szTitle[100];					// 标题栏文本
@@ -123,8 +124,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_KEYDOWN:
-		/*
-		windowUpdator->Update();*/
+		KeyDown(manager, wparam, mm);
+		windowUpdator->Update();
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wparam))

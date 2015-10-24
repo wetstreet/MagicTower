@@ -16,8 +16,15 @@ class MapManager{
 public:
 	MapManager() :currentFloor(1), mapNumber(0){ head = new MapNode; LoadMap(); }
 	int getMapNumber()const{ return mapNumber; }
-	MapNode *Loacate(int number);
+	MapNode *Locate(int number);
+	int getNumber(int floor, int x, int y);
+	void setNumber(int floor, int x, int y, int number);
 	int getCurrentFloor()const{ return currentFloor; }
+	int setCurrentFloor(int i){ currentFloor = i; }
+	//向楼上走
+	void GoUp(){ currentFloor++; }
+	//向楼下走
+	void GoDown(){ currentFloor--; }
 private:
 	void LoadMap();
 	int currentFloor;
@@ -25,7 +32,17 @@ private:
 	MapNode *head;
 };
 
-MapNode *MapManager::Loacate(int number){
+int MapManager::getNumber(int floor, int x, int y){
+	MapNode *p = Locate(floor);
+	return p->map[y][x];
+}
+
+void MapManager::setNumber(int floor, int x, int y, int number){
+	MapNode *p = Locate(floor);
+	p->map[y][x] = number;
+}
+
+MapNode *MapManager::Locate(int number){
 	MapNode *current = head;
 	for (int i = 0; i < number; i++)
 	{

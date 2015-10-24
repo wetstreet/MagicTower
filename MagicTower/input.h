@@ -3,118 +3,38 @@
 
 #include "manager.h"
 
-void KeyDown(Manager *m, WPARAM wparam, int map[][11][11], int currentFloor){
+void KeyDown(Manager *m, WPARAM wparam, MapManager *map){
+	Player *p = m->getPlayer();
+	int x = p->getX();
+	int y = p->getY();
+	int currentFloor = map->getCurrentFloor();
 
 	switch (wparam){
 	case VK_UP:
-		if (pos.y>0){
-			switch (map[currentFloor - 1][pos.y - 1][pos.x]){
-			case ROAD:
-				pos.y--;
-				break;
-			case UPSTAIR:
-				pos.y--;
-				currentFloor++;
-				break;
-			case DOWNSTAIR:
-				pos.y--;
-				currentFloor--;
-				break;
-			default:
-				func(hwnd, UP);
-			}
+		if (y > 0){
+			m->Search(map->getNumber(currentFloor, x, y - 1))->MeetPlayer(currentFloor, x, y - 1, p, map);
 		}
 		break;
 	case VK_DOWN:
-		if (pos.y<10)
-		{
-			switch (map[currentFloor - 1][pos.y + 1][pos.x])
-			{
-			case ROAD:
-				pos.y++;
-				break;
-			case UPSTAIR:
-				pos.y++;
-				currentFloor++;
-				break;
-			case DOWNSTAIR:
-				pos.y++;
-				currentFloor--;
-				break;
-			default:
-				func(hwnd, DOWN);
-			}
+		if (y < 10){
+			m->Search(map->getNumber(currentFloor, x, y + 1))->MeetPlayer(currentFloor, x, y + 1, p, map);
 		}
 		break;
 	case VK_LEFT:
-		if (pos.x>0)
-		{
-			switch (map[currentFloor - 1][pos.y][pos.x - 1])
-			{
-			case ROAD:
-				pos.x--;
-				break;
-			case UPSTAIR:
-				pos.x--;
-				currentFloor++;
-				break;
-			case DOWNSTAIR:
-				pos.x--;
-				currentFloor--;
-				break;
-			default:
-				func(hwnd, LEFT);
-			}
+		if (x > 0){
+			m->Search(map->getNumber(currentFloor, x - 1, y))->MeetPlayer(currentFloor, x - 1, y, p, map);
 		}
 		break;
 	case VK_RIGHT:
-		if (pos.x<10)
-		{
-			switch (map[currentFloor - 1][pos.y][pos.x + 1])
-			{
-			case ROAD:
-				pos.x++;
-				break;
-			case UPSTAIR:
-				pos.x++;
-				currentFloor++;
-				break;
-			case DOWNSTAIR:
-				pos.x++;
-				currentFloor--;
-				break;
-			default:
-				func(hwnd, RIGHT);
-			}
+		if (x < 10){
+			m->Search(map->getNumber(currentFloor, x + 1, y))->MeetPlayer(currentFloor, x + 1, y, p, map);
 		}
 		break;
 	}
 }
 
-void func(HWND hwnd, int dir)
-{
-	int y, x;
-	switch (dir)
-	{
-	case UP:
-		y = pos.y - 1;
-		x = pos.x;
-		break;
-	case DOWN:
-		y = pos.y + 1;
-		x = pos.x;
-		break;
-	case LEFT:
-		y = pos.y;
-		x = pos.x - 1;
-		break;
-	case RIGHT:
-		y = pos.y;
-		x = pos.x + 1;
-		break;
-	}
-	manager.Search(map[currentFloor - 1][y][x])->function(hwnd,currentFloor,x,y);
-	
+//判断下一步会碰到的东西，根据不同的东西有不同的结果
+/*
 	switch (map[currentFloor - 1][y][x])
 	{
 	case DOOR:
@@ -230,4 +150,5 @@ void func(HWND hwnd, int dir)
 		break;
 	}
 }
+*/
 #endif

@@ -50,15 +50,24 @@
     <ClInclude Include="map.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="resource1.h">
+    <ClInclude Include="door.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="road.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="upstairs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="key.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="downstairs.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-    <ResourceCompile Include="Resource1.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
   </ItemGroup>
