@@ -6,16 +6,14 @@
 #include "map.h"
 #include "window.h"
 
+//游戏内各种对象的基类，包括player，enemy，road，key之类等等几乎所有东西。
 class Object{
 public:
 	Object(int ID, UINT resourceId, HINSTANCE hIns) :id(ID){ picture = new Bitmap(hIns, resourceId); }
-	int getId() { return id; }
+	int getId()const{ return id; }
 	void PaintFromZero(HDC hdc){ if(picture) picture->BitBlt(hdc, 0, 0); }
-	virtual void setX(int i){}
-	virtual void setY(int i){}
-	virtual int getKey()const{ return 0; }
-	virtual void setKey(int i){}
-	virtual void Paint(HDC hdc, int x, int y){ if (picture) picture->BitBlt(hdc, g_x + 50 * x, g_y + 50 * y); }
+	virtual void Paint(HDC hdc, int x, int y){ picture->BitBlt(hdc, g_x + 50 * x, g_y + 50 * y); }
+	void BitBlt(HDC hdc, int x, int y){ picture->BitBlt(hdc, x, y); }
 	//当物体碰到玩家时执行的函数
 	virtual void MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){}
 private:

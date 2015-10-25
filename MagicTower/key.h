@@ -2,6 +2,7 @@
 #define KEY_H
 
 #include "object.h"
+#include "player.h"
 #include "window.h"
 
 class Key :public Object{
@@ -11,8 +12,9 @@ public:
 };
 
 void Key::MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){
-	int key = p->getKey();
-	p->setKey(++key);
+	Player *player = (Player *)p;
+	int key = player->getKey();
+	player->setKey(++key);
 	mm->setNumber(floor, x, y, 0);
 }
 

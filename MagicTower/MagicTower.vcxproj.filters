@@ -68,6 +68,15 @@
     <ClInclude Include="window.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="bluegem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="redgem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="shop.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">

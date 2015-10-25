@@ -212,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
+    <ClInclude Include="bluegem.h" />
     <ClInclude Include="definitions.h" />
     <ClInclude Include="door.h" />
     <ClInclude Include="downstairs.h" />
@@ -223,8 +224,10 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="redgem.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="road.h" />
+    <ClInclude Include="shop.h" />
     <ClInclude Include="upstairs.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>

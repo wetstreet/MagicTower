@@ -2,6 +2,7 @@
 #define DOWNSTAIRS_H
 
 #include "object.h"
+#include "player.h"
 #include "map.h"
 
 class Downstairs :public Object{
@@ -11,8 +12,9 @@ public:
 };
 
 void Downstairs::MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){
-	p->setX(x);
-	p->setY(y);
+	Player *player = (Player *)p;
+	player->setX(x);
+	player->setY(y);
 	mm->GoDown();
 }
 

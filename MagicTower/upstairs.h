@@ -11,8 +11,9 @@ public:
 };
 
 void Upstairs::MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){
-	p->setX(x);
-	p->setY(y);
+	Player *player = (Player *)p;
+	player->setX(x);
+	player->setY(y);
 	mm->GoUp();
 }
 

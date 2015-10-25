@@ -10,6 +10,7 @@ HINSTANCE hIns;
 TCHAR szTitle[100];					// 标题栏文本
 TCHAR szWindowClass[100];			// 主窗口类名
 
+Player *player;
 Manager *manager;
 MapManager *mm;
 WindowManager *wm;
@@ -31,15 +32,14 @@ ATOM	MyRegisterClass(HINSTANCE);
 BOOL	InitInstance(HINSTANCE, int);
 LRESULT	CALLBACK WindowProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT	CALLBACK FIGHT(HWND, UINT, WPARAM, LPARAM);
+LRESULT	CALLBACK Shop(HWND, UINT, WPARAM, LPARAM);
 //LRESULT	CALLBACK ABOUT(HWND, UINT, WPARAM, LPARAM);
 //LRESULT	CALLBACK EDITOR(HWND, UINT, WPARAM, LPARAM);
-LRESULT	CALLBACK Shop(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI WinMain(HINSTANCE	hInstance,
 	HINSTANCE	hPrevInstance,
 	LPSTR		lpCmdLine,
-	int			nCmdShow)
-{
+	int			nCmdShow){
 	MSG msg;
 	//在这里初始化manager是因为需要参数hInstance
 	manager = new Manager(hInstance);
@@ -61,8 +61,7 @@ int WINAPI WinMain(HINSTANCE	hInstance,
 	return msg.wParam;
 }
 
-ATOM MyRegisterClass(HINSTANCE hinstance)
-{
+ATOM MyRegisterClass(HINSTANCE hinstance){
 	WNDCLASSEX winclass;
 
 	winclass.cbSize = sizeof(WNDCLASSEX);
@@ -81,8 +80,7 @@ ATOM MyRegisterClass(HINSTANCE hinstance)
 	return RegisterClassEx(&winclass);
 }
 
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
-{
+BOOL InitInstance(HINSTANCE hInstance, int nCmdShow){
 	HWND hWnd;
 
 	
@@ -109,22 +107,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	return TRUE;
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-	switch (msg)
-	{
+	switch (msg){
 	case WM_CREATE:
 		windowUpdator = new WindowUpdator(hwnd);
 		mm = new MapManager;
 		wm = new WindowManager(manager->getHIns(), hwnd);
+		player = manager->getPlayer();
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
 		manager->DrawMap(hdc, mm);
-		manager->PrintInfo(hdc);
+		manager->PrintPlayerInfo(hdc);
 		EndPaint(hwnd, &ps);
 		break;
 	case WM_KEYDOWN:
@@ -132,8 +129,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		windowUpdator->Update();
 		break;
 	case WM_COMMAND:
-		switch (LOWORD(wparam))
-		{
+		switch (LOWORD(wparam)){
 		case IDM_ABOUT:
 			//DialogBox(hIns, (LPCTSTR)IDD_ABOUT, hwnd, (DLGPROC)ABOUT);
 			break;
@@ -153,61 +149,52 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	return 0;
 }
 
-LRESULT CALLBACK FIGHT(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+LRESULT CALLBACK FIGHT(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
-	//static Enemy m = *pMp;
+
+	switch (msg){
+	case WM_INITDIALOG:
+		//开启计时器
+		SetTimer(hWnd, FIGHT_TIMER, TIME_DELAY, NULL);
+		//根据玩家和怪物的数据初始化战斗窗口的各个标签
+		InitFightWindowText(wm, manager->getPlayer(), hWnd);
+		break;
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		//显示怪物的图片
+		manager->Search(wm->getEnemyId())->BitBlt(hdc, 280, 70);
+		//更新玩家和怪物的血量
+		SetWindowText(GetDlgItem(hWnd, IDC_ENEMY_HEALTH), IntToWString(wm->getEnemyHealth()).c_str());
+		SetWindowText(GetDlgItem(hWnd, IDC_PLAYER_HEALTH), IntToWString(player->getHealth()).c_str());
+		EndPaint(hWnd, &ps);
+		break;
+	case WM_TIMER:
+		FightTimer(wm, manager->getPlayer(), hWnd, wparam);
+		windowUpdator->Update(hWnd);
+		windowUpdator->Update();
+		return TRUE;
+	}
+	return FALSE;
+}
+
+LRESULT CALLBACK Shop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	HDC hdc;
+	PAINTSTRUCT ps;
 
 	switch (msg)
 	{
 	case WM_INITDIALOG:
-		/*
-		m.hp = pMp->hp;
-		SetTimer(hwnd, 1, 300, NULL);
-		if (sprintf(b, "%d", m.hp))
-			SetWindowText(GetDlgItem(hwnd, IDC_MONSTER_HEALTH), buffer);
-		if (sprintf(b, "%d", m.atk))
-			SetWindowText(GetDlgItem(hwnd, IDC_MONSTER_ATTACK), buffer);
-		if (sprintf(b, "%d", m.dfs))
-			SetWindowText(GetDlgItem(hwnd, IDC_MONSTER_DEFENSE), buffer);
-		if (sprintf(b, "%d", hp))
-			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_HEALTH), buffer);
-		if (sprintf(b, "%d", atk))
-			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_ATTACK), buffer);
-		if (sprintf(b, "%d", dfs))
-			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_DEFENSE), buffer);*/
-		//return TRUE;
-		break;
+		return TRUE;
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		/*
-		pBitmap->BitBlt(hdc, 76, 47);
-		if (sprintf(buffer, "%d", m.hp))
-			SetWindowText(GetDlgItem(hwnd, IDC_MONSTER_HEALTH), buffer);
-		if (sprintf(buffer, "%d", hp))
-			SetWindowText(GetDlgItem(hwnd, IDC_PLAYER_HEALTH), buffer);*/
 		EndPaint(hwnd, &ps);
-		break;
+		return TRUE;
 	case WM_COMMAND:
-		if (LOWORD(wparam) == IDC_CLOSE)
-		{
-			EndDialog(hwnd, LOWORD(wparam));
-			return TRUE;
-		}
-		break;
-	case WM_TIMER:
-		/*
-		m.hp -= (atk - m.dfs);
-		if (m.hp <= 0)
-		{
-			money += m.money;
-			KillTimer(hwnd, 1);
-			EndDialog(hwnd, LOWORD(wparam));
-		}
-		else
-			hp -= (m.atk - dfs);
-		windowUpdator->Update();*/
+		Shopping(player, wparam, hwnd);
+		windowUpdator->Update(hwnd);
 		return TRUE;
 	}
 	return FALSE;
@@ -382,54 +369,6 @@ LRESULT CALLBACK EDITOR(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 			return TRUE;
 		}
 		break;
-	}
-	return FALSE;
-}
-
-LRESULT CALLBACK Shop(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	HDC hdc;
-	PAINTSTRUCT ps;
-	switch (msg)
-	{
-	case WM_INITDIALOG:
-		return TRUE;
-	case WM_PAINT:
-		hdc = BeginPaint(hwnd, &ps);
-		EndPaint(hwnd, &ps);
-		return TRUE;
-	case WM_COMMAND:
-		switch (LOWORD(wparam))
-		{
-		case IDC_EXIT:
-			EndDialog(hwnd, LOWORD(wparam));
-			break;
-		case IDC_BUYHP:
-			if (money >= 25)
-			{
-				hp += 800;
-				money -= 25;
-			}
-			break;
-		case IDC_BUYATK:
-			if (money >= 25)
-			{
-				atk += 4;
-				money -= 25;
-			}
-			break;
-		case IDC_BUYDFS:
-			if (money >= 25)
-			{
-				dfs += 4;
-				money -= 25;
-			}
-			break;
-		default:
-			return FALSE;
-		}
-		windowUpdator->Update();
-		return TRUE;
 	}
 	return FALSE;
 }
