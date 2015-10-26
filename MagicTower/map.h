@@ -60,17 +60,16 @@ void MapManager::LoadMap()
 	//格式转换
 	stringstream stream;
 	string path;
-	string s;
+	string fileName;
 
 	//因为地图的层数是从1开始数的，所以z从1开始
 	//将int型转成字符串
-	int z = 1;
-	while (1)
-	{
-		stream << z;
-		stream >> s;
+	int fileNumber = 1;
+	while (true){
+		stream << fileNumber;
+		stream >> fileName;
 		stream.clear();
-		path = "map\\" + s + ".txt";
+		path = "map\\" + fileName + ".txt";
 		//读取地图文件
 		fin.open(path);
 		//若为文件不存在则跳出循环
@@ -78,22 +77,19 @@ void MapManager::LoadMap()
 			break;
 
 		MapNode *current = head;
-		while (current->next)
-		{
+		while (current->next){
 			current = current->next;
 		}
 		current->next = new MapNode;
-		for (int x = 0; x < 11; x++)
-		{
-			for (int y = 0; y < 11; y++)
-			{
+		for (int x = 0; x < 11; x++){
+			for (int y = 0; y < 11; y++){
 				fin >> current->next->map[x][y];
 			}
 		}
 		fin.close();
 		mapNumber++;
 		//开始下一次循环，读取下一个文件
-		z++;
+		fileNumber++;
 	}
 }
 #endif

@@ -8,39 +8,39 @@
 #include "resource.h"
 using namespace std;
 
+//用来更新窗口的窗口更新类
 class WindowUpdator{
 public:
-	WindowUpdator(HWND hwnd) :hWnd(hwnd){}
+	WindowUpdator(HINSTANCE hIns) :hInstance(hIns){}
+	HINSTANCE getHIns()const{ return hInstance; }
+	void setHMainWindow(HWND hWnd){ hMainWindow = hWnd; }
+	void setHFightWindow(HWND hWnd){ hFightWindow = hWnd; }
+	void setHEditorWindow(HWND hWnd){ hEditorWindow = hWnd; }
+	void UpdateMainWindow(){ Update(hMainWindow); }
+	void UpdateFightWindow(){ Update(hFightWindow); }
+	void UpdateEditorWindow(){ Update(hEditorWindow); }
+private:
+	HWND hMainWindow;
+	HWND hFightWindow;
+	HWND hEditorWindow;
+	HINSTANCE hInstance;
 	void Update(HWND hwnd){
 		InvalidateRgn(hwnd, NULL, FALSE);
 		UpdateWindow(hwnd);
 	}
-	void Update(){
-		InvalidateRgn(hWnd, NULL, FALSE);
-		UpdateWindow(hWnd);
-	}
-private:
-	HWND hWnd;
 };
 
 //这个函数不能放在WindowManager类中，因为windowmanager类会被object类调用，而这个函数会调用object类的子类player类
 //如果放在windowmanager类（用来给object的各个子类调用别的窗口）中的话会造成递归定义，所以这个只能放在另一个头文件中
 void FightTimer(WindowManager *wm, Player *p, HWND hWnd, WPARAM wparam){
-	int playerHealth = p->getHealth();
-	int playerAttack = p->getAttack();
-	int playerDefense = p->getDefense();
-	int enemyHealth = wm->getEnemyHealth();
-	int enemyAttack = wm->getEnemyAttack();
-	int enemyDefense = wm->getEnemyDefense();
-
-	wm->ReduceEnemyHealth(playerAttack - enemyDefense);
-	if (enemyHealth <= 0){
+	wm->ReduceEnemyHealth(p->getAttack() - wm->getEnemyDefense());
+	if (wm->getEnemyHealth() <= 0){
 		p->AddMoney(wm->getEnemyMoney());
 		KillTimer(hWnd, FIGHT_TIMER);
 		EndDialog(hWnd, LOWORD(wparam));
 	}
 	else{
-		p->ReduceHealth(enemyAttack - playerDefense);
+		p->ReduceHealth(wm->getEnemyAttack() - p->getDefense());
 	}
 }
 

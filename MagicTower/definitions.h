@@ -6,7 +6,13 @@
 const int TIME_DELAY = 300;
 const int FIGHT_TIMER = 1;
 
-const int PLAYER_INIT_ATTACK = 20;
+const int PLAYER_INIT_X = 5;
+const int PLAYER_INIT_Y = 9;
+const int PLAYER_INIT_HEALTH = 1000;
+const int PLAYER_INIT_ATTACK = 200;
+const int PLAYER_INIT_DEFENSE = 10;
+const int PLAYER_INIT_MONEY = 200;
+const int PLAYER_INIT_KEY = 20;
 
 const int UP = 0;
 const int DOWN = 1;
@@ -44,9 +50,10 @@ const int TYPE_UPSTAIRS = 4;
 const int TYPE_DOWNSTAIRS = 5;
 const int TYPE_DOOR = 6;
 const int TYPE_KEY = 7;
-const int TYPE_BLUEGEM = 8;
-const int TYPE_REDGEM = 9;
-
-#define dim(x) (sizeof(x)/sizeof(x[0]))
+const int TYPE_SHOP = 8;
+const int TYPE_BLUEGEM = 9;
+const int TYPE_REDGEM = 10;
+const int TYPE_SMALLMED = 11;
+const int TYPE_BIGMED = 12;
 
 #endif

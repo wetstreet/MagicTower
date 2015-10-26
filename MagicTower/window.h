@@ -5,7 +5,7 @@
 #include "definitions.h"
 
 extern LRESULT	CALLBACK FIGHT(HWND, UINT, WPARAM, LPARAM);
-//extern LRESULT	CALLBACK SHOP(HWND, UINT, WPARAM, LPARAM);
+extern LRESULT	CALLBACK SHOP(HWND, UINT, WPARAM, LPARAM);
 
 //相当于一个中转站，由MeetPlayer函数传入对应的参数并调用这个类中的函数
 //遇到怪物时保存怪物信息并打开战斗窗口，并在战斗窗口中对这个类中保存的信息进行操作

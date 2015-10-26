@@ -211,14 +211,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bigmed.h" />
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="bluegem.h" />
     <ClInclude Include="definitions.h" />
     <ClInclude Include="door.h" />
     <ClInclude Include="downstairs.h" />
+    <ClInclude Include="editor.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="general.h" />
-    <ClInclude Include="input.h" />
     <ClInclude Include="key.h" />
     <ClInclude Include="manager.h" />
     <ClInclude Include="map.h" />
@@ -228,6 +229,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="road.h" />
     <ClInclude Include="shop.h" />
+    <ClInclude Include="smallmed.h" />
     <ClInclude Include="upstairs.h" />
     <ClInclude Include="window.h" />
   </ItemGroup>

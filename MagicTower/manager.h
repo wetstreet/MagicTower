@@ -16,8 +16,11 @@
 #include "downstairs.h"
 #include "door.h"
 #include "key.h"
+#include "shop.h"
 #include "bluegem.h"
 #include "redgem.h"
+#include "smallmed.h"
+#include "bigmed.h"
 using namespace std;
 
 //结点保存object类对象，object类中包含位图及对应的名字
@@ -57,11 +60,20 @@ node::node(int id, UINT resourceId, int type, HINSTANCE hIns, int health, int at
 	case TYPE_KEY:
 		data = new Key(id, resourceId, hIns);
 		break;
+	case TYPE_SHOP:
+		data = new Shop(id, resourceId, hIns);
+		break;
 	case TYPE_BLUEGEM:
 		data = new BlueGem(id, resourceId, hIns);
 		break;
 	case TYPE_REDGEM:
 		data = new RedGem(id, resourceId, hIns);
+		break;
+	case TYPE_SMALLMED:
+		data = new SmallMed(id, resourceId, hIns);
+		break;
+	case TYPE_BIGMED:
+		data = new BigMed(id, resourceId, hIns);
 		break;
 	}
 	next = nullptr;
@@ -70,22 +82,22 @@ node::node(int id, UINT resourceId, int type, HINSTANCE hIns, int health, int at
 //manager类作为链表管理结点
 class Manager{
 public:
-	Manager(HINSTANCE hIns = nullptr) :hInstance(hIns), length(0){ head = new node; Initialize(); }
+	Manager(HINSTANCE hIns, HWND hWnd) :hInstance(hIns), hMainWindow(hWnd), length(0){ head = new node; Initialize(); }
 	void Initialize();
 	~Manager(){ clear(); }
 	void clear();
 	Object *Search(int);
 	int	getLength(){ return length; }
-	HINSTANCE getHIns()const{ return hInstance; }
-	Player *getPlayer(){ return (Player*)Search(PLAYER); }
+	Player *getPlayer(){ return (Player*)Search(ID_PLAYER); }
 	bool AddElement(int id, UINT resourceId, int type, int health = 0, int attack = 0, int defense = 0, int money = 0);
-	void Fight(HWND, int, int, int);
 	void DrawMap(HDC hdc, MapManager *mm);
 	void PrintPlayerInfo(HDC hdc);
+	void OnKeyDown(WPARAM wparam, MapManager *map, WindowManager *wm);
 private:
 	int length;
 	node *head;
 	HINSTANCE hInstance;
+	HWND hMainWindow;
 };
 
 //在manager类初始化时注册各个对象
@@ -99,11 +111,11 @@ void Manager::Initialize()
 	AddElement(3, IDB_DOWNSTAIRS, TYPE_DOWNSTAIRS);
 	AddElement(4, IDB_DOOR, TYPE_DOOR);
 	AddElement(5, IDB_KEY, TYPE_KEY);
-	AddElement(6, IDB_SHOP, TYPE_OBJECT);
+	AddElement(6, IDB_SHOP, TYPE_SHOP);
 	AddElement(7, IDB_BLUEGEM, TYPE_BLUEGEM);
 	AddElement(8, IDB_REDGEM, TYPE_REDGEM);
-	AddElement(9, IDB_SMALLMED, TYPE_OBJECT);
-	AddElement(10, IDB_BIGMED, TYPE_OBJECT);
+	AddElement(9, IDB_SMALLMED, TYPE_SMALLMED);
+	AddElement(10, IDB_BIGMED, TYPE_BIGMED);
 	AddElement(11, IDB_GREENSLIME, TYPE_ENEMY, 50, 20, 1, 1);
 	AddElement(12, IDB_REDSLIME, TYPE_ENEMY, 70, 15, 2, 2);
 	AddElement(13, IDB_BLACKSLIME, TYPE_ENEMY, 200, 35, 10, 5);
@@ -154,18 +166,9 @@ void Manager::clear(){
 		delete p;
 	}
 }
-/*
-//进入战斗界面
-void Manager::Fight(HWND hwnd, int floor, int x, int y)
-{
-	if (calcDamage()){
-		//DialogBox(hIns, (LPCTSTR)IDD_FIGHT, hwnd, (DLGPROC)FIGHT);
-		//map[floor - 1][y][x] = 0;
-	}
-}*/
 
 void Manager::DrawMap(HDC hdc, MapManager *mm){
-	Search(BACKGROUND)->PaintFromZero(hdc);
+	Search(ID_BACKGROUND)->PaintFromZero(hdc);
 
 	for (int x = 0; x < 11; x++){
 		for (int y = 0; y < 11; y++){
@@ -191,6 +194,36 @@ void Manager::PrintPlayerInfo(HDC hdc){
 	TextOut(hdc, 650, 140, s.c_str(), s.length());
 	s = L"钥匙：" + IntToWString(p->getKey());
 	TextOut(hdc, 650, 160, s.c_str(), s.length());
+}
+
+void Manager::OnKeyDown(WPARAM wparam, MapManager *map, WindowManager *wm){
+	Player *p = getPlayer();
+	int x = p->getX();
+	int y = p->getY();
+	int currentFloor = map->getCurrentFloor();
+
+	switch (wparam){
+	case VK_UP:
+		if (y > 0){
+			Search(map->getNumber(currentFloor, x, y - 1))->MeetPlayer(currentFloor, x, y - 1, p, map, wm);
+		}
+		break;
+	case VK_DOWN:
+		if (y < 10){
+			Search(map->getNumber(currentFloor, x, y + 1))->MeetPlayer(currentFloor, x, y + 1, p, map, wm);
+		}
+		break;
+	case VK_LEFT:
+		if (x > 0){
+			Search(map->getNumber(currentFloor, x - 1, y))->MeetPlayer(currentFloor, x - 1, y, p, map, wm);
+		}
+		break;
+	case VK_RIGHT:
+		if (x < 10){
+			Search(map->getNumber(currentFloor, x + 1, y))->MeetPlayer(currentFloor, x + 1, y, p, map, wm);
+		}
+		break;
+	}
 }
 
 #endif

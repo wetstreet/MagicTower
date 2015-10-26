@@ -22,6 +22,7 @@ private:
 	int health, attack, defense, money;
 };
 
+//这个函数只是根据玩家和怪物的数据判断能否打得过，并不更改玩家和怪物的数据
 bool Enemy::calcDamage(Player *p){
 	int playerHealth = p->getHealth();
 	int playerAttack = p->getAttack();
@@ -35,7 +36,7 @@ bool Enemy::calcDamage(Player *p){
 	{
 		//玩家先攻，怪物后攻，若玩家攻击后怪物死亡，则怪物不攻击
 		EnemyHealth -= (playerAttack - defense);
-		if (EnemyHealth < 0)
+		if (EnemyHealth <= 0)
 			return true;
 		playerHealth -= (attack - playerDefense);
 	}

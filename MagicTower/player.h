@@ -7,8 +7,7 @@
 
 class Player :public Object{
 public:
-	Player(int id, UINT resourceId, HINSTANCE hIns) :Object(id, resourceId, hIns){
-		health = 1000; attack = PLAYER_INIT_ATTACK; defense = 10; money = 0; x = 5; y = 9; }
+	Player(int id, UINT resourceId, HINSTANCE hIns);
 	void Paint(HDC hdc){ Object::Paint(hdc, x, y); }
 	int getHealth()const{ return health; }
 	void AddHealth(int i){ health += i; }
@@ -34,4 +33,15 @@ private:
 	int health, attack, defense, money, key;
 	int x, y;
 };
+
+
+Player::Player(int id, UINT resourceId, HINSTANCE hIns) :Object(id, resourceId, hIns){
+	x = PLAYER_INIT_X;
+	y = PLAYER_INIT_Y;
+	health = PLAYER_INIT_HEALTH;
+	attack = PLAYER_INIT_ATTACK;
+	defense = PLAYER_INIT_DEFENSE;
+	money = PLAYER_INIT_MONEY;
+	key = PLAYER_INIT_KEY;
+}
 #endif
