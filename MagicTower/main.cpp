@@ -153,7 +153,7 @@ LRESULT CALLBACK FIGHT(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		//显示怪物的图片
+		//显示怪物的图片,因为通过这种方式显示的图片刷新就会消失，所以要每一帧都显示一遍
 		manager->Search(wm->getEnemyId())->BitBlt(hdc, 280, 70);
 		//更新玩家和怪物的血量
 		SetWindowText(GetDlgItem(hWnd, IDC_ENEMY_HEALTH), IntToWString(wm->getEnemyHealth()).c_str());
@@ -186,18 +186,18 @@ LRESULT CALLBACK SHOP(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
 	return FALSE;
 }
 
-LRESULT CALLBACK EDITOR(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
+LRESULT CALLBACK EDITOR(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT ps;
 
-	switch (msg){
+	switch (message){
 	case WM_INITDIALOG:
-		em = new EditorManager(hWnd);
+		em = new EditorManager(hIns, hWnd, mm);
 		//添加窗口句柄到窗口更新器中
 		windowUpdator->setHEditorWindow(hWnd);
 		return TRUE;
 	case WM_LBUTTONDOWN:
-		em->OnLButtonDown(lparam);
+		em->OnLButtonDown(lParam);
 		windowUpdator->UpdateEditorWindow();
 		return TRUE;
 	case WM_PAINT:
@@ -206,11 +206,14 @@ LRESULT CALLBACK EDITOR(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
 		EndPaint(hWnd, &ps);
 		return TRUE;
 	case WM_COMMAND:
-		em->OnObjectSelected(wparam);
-		windowUpdator->UpdateEditorWindow();
-		return TRUE;
+		return em->OnCommand(hWnd, message, wParam, lParam);
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	default:
+		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	return FALSE;
+	return 0;
 }
 
 LRESULT CALLBACK ABOUT(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){

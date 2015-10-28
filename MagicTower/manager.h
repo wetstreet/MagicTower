@@ -101,8 +101,7 @@ private:
 };
 
 //在manager类初始化时注册各个对象
-void Manager::Initialize()
-{
+void Manager::Initialize(){
 	AddElement(-2, IDB_PLAYER, TYPE_PLAYER);
 	AddElement(-1, IDB_BACKGROUND, TYPE_OBJECT);
 	AddElement(0, NULL, TYPE_ROAD);

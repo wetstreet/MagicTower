@@ -15,6 +15,8 @@ struct MapNode{
 class MapManager{
 public:
 	MapManager() :currentFloor(1), mapNumber(0){ head = new MapNode; LoadMap(); }
+	~MapManager(){ Clear(); }
+	void Clear();
 	int getMapNumber()const{ return mapNumber; }
 	MapNode *Locate(int number);
 	int getNumber(int floor, int x, int y);
@@ -31,6 +33,17 @@ private:
 	int mapNumber;
 	MapNode *head;
 };
+
+void MapManager::Clear(){
+	MapNode *del;
+	MapNode *current = head;
+	while (current->next){
+		del = current;
+		current = current->next->next;
+		delete del;
+		mapNumber--;
+	}
+}
 
 int MapManager::getNumber(int floor, int x, int y){
 	MapNode *p = Locate(floor);
