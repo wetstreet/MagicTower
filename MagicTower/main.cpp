@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	return msg.wParam;
 }
 
-ATOM MyRegisterClass(HINSTANCE hinstance){
+ATOM MyRegisterClass(HINSTANCE hInstance){
 	WNDCLASSEX winclass;
 
 	winclass.cbSize = sizeof(WNDCLASSEX);
@@ -55,7 +55,7 @@ ATOM MyRegisterClass(HINSTANCE hinstance){
 	winclass.lpfnWndProc = WindowProc;
 	winclass.cbClsExtra = 0;
 	winclass.cbWndExtra = 0;
-	winclass.hInstance = hinstance;
+	winclass.hInstance = hInstance;
 	winclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	winclass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winclass.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -69,16 +69,18 @@ ATOM MyRegisterClass(HINSTANCE hinstance){
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow){
 	HWND hWnd;
 	
+	int x = GetSystemMetrics(SM_CXSCREEN);
+	int y = GetSystemMetrics(SM_CYSCREEN);
+
 	hWnd = CreateWindowEx(NULL,
 		szWindowClass,
 		szTitle,
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		CW_USEDEFAULT, CW_USEDEFAULT,
-		800, 630,
-		NULL,
-		NULL,
-		hInstance,
-		NULL);
+		x / 2 - MAINWINDOW_WIDTH / 2,
+		y / 2 - MAINWINDOW_HEIGHT / 2,
+		MAINWINDOW_WIDTH,
+		MAINWINDOW_HEIGHT,
+		NULL, NULL, hInstance, NULL);
 
 	if (!hWnd)
 		return FALSE;
@@ -89,11 +91,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow){
 	return TRUE;
 }
 
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 	PAINTSTRUCT ps;
 	HDC hdc;
 
-	switch (msg){
+	switch (message){
 	case WM_CREATE:
 		//添加窗口句柄到窗口更新器中
 		windowUpdator->setHMainWindow(hWnd);
@@ -102,27 +104,25 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
 		//初始化用来调用其它子窗口的WindowManager类
 		wm = new WindowManager(windowUpdator->getHIns(), hWnd);
 		player = manager->getPlayer();
-		break;
+		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		manager->DrawMap(hdc, mm);
 		manager->PrintPlayerInfo(hdc);
 		EndPaint(hWnd, &ps);
-		break;
+		return 0;
 	case WM_KEYDOWN:
-		manager->OnKeyDown(wparam, mm, wm);
+		manager->OnKeyDown(wParam, mm, wm);
 		windowUpdator->UpdateMainWindow();
-		break;
+		return 0;
 	case WM_COMMAND:
-		switch (LOWORD(wparam)){
+		switch (LOWORD(wParam)){
 		case IDM_ABOUT:
 			DialogBox(hIns, (LPCTSTR)IDD_ABOUT, hWnd, (DLGPROC)ABOUT);
-			break;
+			return 0;
 		case IDM_EDITOR:
 			DialogBox(hIns, (LPCTSTR)IDD_EDITOR, hWnd, (DLGPROC)EDITOR);
-			break;
-		default:
-			return DefWindowProc(hWnd, msg, wparam, lparam);
+			return 0;
 		}
 		break;
 	case WM_DESTROY:
@@ -131,37 +131,35 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
 		delete em;
 		delete windowUpdator;
 		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hWnd, msg, wparam, lparam);
+		return 0;
 	}
-	return 0;
+	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-LRESULT CALLBACK FIGHT(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
+LRESULT CALLBACK FIGHT(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT ps;
 
-	switch (msg){
+	switch (message){
 	case WM_INITDIALOG:
 		//开启计时器
-		SetTimer(hWnd, FIGHT_TIMER, TIME_DELAY, NULL);
+		SetTimer(hDlg, FIGHT_TIMER_ID, FIGHT_TIMER_DELAY, NULL);
 		//根据玩家和怪物的数据初始化战斗窗口的各个标签
-		InitFightWindowText(wm, manager->getPlayer(), hWnd);
+		InitFightWindowText(wm, manager->getPlayer(), hDlg);
 		//添加窗口句柄到窗口更新器中
-		windowUpdator->setHFightWindow(hWnd);
-		break;
+		windowUpdator->setHFightWindow(hDlg);
+		return TRUE;
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
+		hdc = BeginPaint(hDlg, &ps);
 		//显示怪物的图片,因为通过这种方式显示的图片刷新就会消失，所以要每一帧都显示一遍
 		manager->Search(wm->getEnemyId())->BitBlt(hdc, 280, 70);
 		//更新玩家和怪物的血量
-		SetWindowText(GetDlgItem(hWnd, IDC_ENEMY_HEALTH), IntToWString(wm->getEnemyHealth()).c_str());
-		SetWindowText(GetDlgItem(hWnd, IDC_PLAYER_HEALTH), IntToWString(player->getHealth()).c_str());
-		EndPaint(hWnd, &ps);
-		break;
+		SetWindowText(GetDlgItem(hDlg, IDC_ENEMY_HEALTH), IntToWString(wm->getEnemyHealth()).c_str());
+		SetWindowText(GetDlgItem(hDlg, IDC_PLAYER_HEALTH), IntToWString(player->getHealth()).c_str());
+		EndPaint(hDlg, &ps);
+		return TRUE;
 	case WM_TIMER:
-		FightTimer(wm, manager->getPlayer(), hWnd, wparam);
+		FightTimer(wm, manager->getPlayer(), hDlg, wParam);
 		windowUpdator->UpdateFightWindow();
 		windowUpdator->UpdateMainWindow();
 		return TRUE;
@@ -169,67 +167,68 @@ LRESULT CALLBACK FIGHT(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam){
 	return FALSE;
 }
 
-LRESULT CALLBACK SHOP(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
+LRESULT CALLBACK SHOP(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT ps;
 
-	switch (msg){
+	switch (message){
+	case WM_INITDIALOG:
+		SetFocus(GetDlgItem(hDlg, IDC_BUY_HEALTH));
+		return TRUE;
 	case WM_PAINT:
-		hdc = BeginPaint(hwnd, &ps);
-		EndPaint(hwnd, &ps);
+		hdc = BeginPaint(hDlg, &ps);
+		EndPaint(hDlg, &ps);
 		return TRUE;
 	case WM_COMMAND:
-		Shopping(player, wparam, hwnd);
+		Shopping(player, wParam, hDlg);
 		windowUpdator->UpdateMainWindow();
 		return TRUE;
 	}
 	return FALSE;
 }
 
-LRESULT CALLBACK EDITOR(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+LRESULT CALLBACK EDITOR(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT ps;
 
 	switch (message){
 	case WM_INITDIALOG:
-		em = new EditorManager(hIns, hWnd, mm);
+		em = new EditorManager(hIns, hDlg, mm);
 		//添加窗口句柄到窗口更新器中
-		windowUpdator->setHEditorWindow(hWnd);
+		windowUpdator->setHEditorWindow(hDlg);
 		return TRUE;
 	case WM_LBUTTONDOWN:
 		em->OnLButtonDown(lParam);
 		windowUpdator->UpdateEditorWindow();
 		return TRUE;
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
+		hdc = BeginPaint(hDlg, &ps);
 		em->OnPaint(hdc);
-		EndPaint(hWnd, &ps);
+		EndPaint(hDlg, &ps);
 		return TRUE;
 	case WM_COMMAND:
-		return em->OnCommand(hWnd, message, wParam, lParam);
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProc(hWnd, message, wParam, lParam);
+		return em->OnCommand(hDlg, message, wParam, lParam);
+	case WM_CLOSE:
+		EndDialog(hDlg, LOWORD(wParam));
+		return TRUE;
 	}
-	return 0;
+	return FALSE;
 }
 
-LRESULT CALLBACK ABOUT(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam){
+LRESULT CALLBACK ABOUT(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT ps;
 
-	switch (msg){
+	switch (message){
 	case WM_INITDIALOG:
 		return TRUE;
 	case WM_PAINT:
-		hdc = BeginPaint(hwnd, &ps);
-		EndPaint(hwnd, &ps);
+		hdc = BeginPaint(hDlg, &ps);
+		EndPaint(hDlg, &ps);
 		return TRUE;
 	case WM_COMMAND:
-		if (LOWORD(wparam) == IDOK){
-			EndDialog(hwnd, LOWORD(wparam));
+		if (LOWORD(wParam) == IDOK){
+			EndDialog(hDlg, LOWORD(wParam));
 			return TRUE;
 		}
 		break;

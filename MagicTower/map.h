@@ -8,13 +8,13 @@ using namespace std;
 
 struct MapNode{
 	MapNode(MapNode *link = nullptr) :next(link){}
-	int map[11][11];
+	int map[MAP_SIZE_X][MAP_SIZE_X];
 	MapNode *next;
 };
 
 class MapManager{
 public:
-	MapManager() :currentFloor(1), mapNumber(0){ head = new MapNode; LoadMap(); }
+	MapManager() :currentFloor(MAP_INIT_FLOOR){ head = new MapNode; LoadMap(); }
 	~MapManager(){ Clear(); }
 	void Clear();
 	int getMapNumber()const{ return mapNumber; }
@@ -47,12 +47,14 @@ void MapManager::Clear(){
 
 int MapManager::getNumber(int floor, int x, int y){
 	MapNode *p = Locate(floor);
-	return p->map[y][x];
+	//x,y为逻辑坐标，作为数组下标的话就要减一
+	return p->map[y - 1][x - 1];
 }
 
 void MapManager::setNumber(int floor, int x, int y, int number){
 	MapNode *p = Locate(floor);
-	p->map[y][x] = number;
+	//x,y为逻辑坐标，作为数组下标的话就要减一
+	p->map[y - 1][x - 1] = number;
 }
 
 MapNode *MapManager::Locate(int number){
@@ -94,8 +96,8 @@ void MapManager::LoadMap()
 			current = current->next;
 		}
 		current->next = new MapNode;
-		for (int x = 0; x < 11; x++){
-			for (int y = 0; y < 11; y++){
+		for (int x = 0; x < MAP_SIZE_X; x++){
+			for (int y = 0; y < MAP_SIZE_X; y++){
 				fin >> current->next->map[x][y];
 			}
 		}

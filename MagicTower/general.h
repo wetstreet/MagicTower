@@ -30,13 +30,22 @@ private:
 	}
 };
 
+//将整型转换为宽字符串型
+wstring IntToWString(int i){
+	wstring s;
+	wstringstream stream;
+	stream << i;
+	stream >> s;
+	return s;
+}
+
 //这个函数不能放在WindowManager类中，因为windowmanager类会被object类调用，而这个函数会调用object类的子类player类
 //如果放在windowmanager类（用来给object的各个子类调用别的窗口）中的话会造成递归定义，所以这个只能放在另一个头文件中
 void FightTimer(WindowManager *wm, Player *p, HWND hWnd, WPARAM wparam){
 	wm->ReduceEnemyHealth(p->getAttack() - wm->getEnemyDefense());
 	if (wm->getEnemyHealth() <= 0){
 		p->AddMoney(wm->getEnemyMoney());
-		KillTimer(hWnd, FIGHT_TIMER);
+		KillTimer(hWnd, FIGHT_TIMER_ID);
 		EndDialog(hWnd, LOWORD(wparam));
 	}
 	else{
@@ -68,15 +77,6 @@ void Shopping(Player *p, WPARAM wparam, HWND hWnd){
 		}
 		break;
 	}
-}
-
-//将整型转换为宽字符串型
-wstring IntToWString(int i){
-	wstring s;
-	wstringstream stream;
-	stream << i;
-	stream >> s;
-	return s;
 }
 
 //初始化战斗窗口文本

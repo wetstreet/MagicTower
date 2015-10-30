@@ -203,22 +203,22 @@ void Manager::OnKeyDown(WPARAM wparam, MapManager *map, WindowManager *wm){
 
 	switch (wparam){
 	case VK_UP:
-		if (y > 0){
+		if (y > 1){
 			Search(map->getNumber(currentFloor, x, y - 1))->MeetPlayer(currentFloor, x, y - 1, p, map, wm);
 		}
 		break;
 	case VK_DOWN:
-		if (y < 10){
+		if (y < MAP_SIZE_Y){
 			Search(map->getNumber(currentFloor, x, y + 1))->MeetPlayer(currentFloor, x, y + 1, p, map, wm);
 		}
 		break;
 	case VK_LEFT:
-		if (x > 0){
+		if (x > 1){
 			Search(map->getNumber(currentFloor, x - 1, y))->MeetPlayer(currentFloor, x - 1, y, p, map, wm);
 		}
 		break;
 	case VK_RIGHT:
-		if (x < 10){
+		if (x < MAP_SIZE_X){
 			Search(map->getNumber(currentFloor, x + 1, y))->MeetPlayer(currentFloor, x + 1, y, p, map, wm);
 		}
 		break;

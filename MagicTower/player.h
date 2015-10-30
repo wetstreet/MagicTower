@@ -8,7 +8,7 @@
 class Player :public Object{
 public:
 	Player(int id, UINT resourceId, HINSTANCE hIns);
-	void Paint(HDC hdc){ Object::Paint(hdc, x, y); }
+	void Paint(HDC hdc){ Object::Paint(hdc, x - 1, y - 1); }
 	int getHealth()const{ return health; }
 	void AddHealth(int i){ health += i; }
 	void ReduceHealth(int i){ health -= i; }

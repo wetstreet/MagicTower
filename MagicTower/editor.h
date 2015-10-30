@@ -51,7 +51,7 @@ LRESULT EditorManager::OnCommand(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lpar
 		}
 		else
 			MessageBox(hWnd, L"file doesn't exist", L"error", 0);
-		return FALSE;
+		return TRUE;
 	case IDC_SAVE:
 		hFile = GetDlgItem(hWnd, IDC_FILE);
 		fileNameLength = GetWindowTextLength(hFile);
@@ -71,7 +71,7 @@ LRESULT EditorManager::OnCommand(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lpar
 		}
 		else
 			MessageBox(hWnd, L"file doesn't exist", L"error", 0);
-		return FALSE;
+		return TRUE;
 	case IDC_CREATE:
 		hFile = GetDlgItem(hWnd, IDC_FILE);
 		fileNameLength = GetWindowTextLength(hFile);
@@ -93,72 +93,69 @@ LRESULT EditorManager::OnCommand(HWND hWnd, UINT msg, WPARAM wparam, LPARAM lpar
 			fs.close();
 			MessageBox(hWnd, L"file created!", L"success", 0);
 		}
-		return FALSE;
-	case IDC_CLOSE:
-		EndDialog(hWnd, LOWORD(wparam));
-		return FALSE;
+		return TRUE;
 	case IDC_WALL:
 		StoringId = ID_WALL;
-		return FALSE;
+		return TRUE;
 	case IDC_ROAD:
 		StoringId = ID_ROAD;
-		return FALSE;
+		return TRUE;
 	case IDC_UPSTAIR:
 		StoringId = ID_UPSTAIRS;
-		return FALSE;
+		return TRUE;
 	case IDC_DOWNSTAIR:
 		StoringId = ID_DOWNSTAIRS;
-		return FALSE;
+		return TRUE;
 	case IDC_DOOR:
 		StoringId = ID_DOOR;
-		return FALSE;
+		return TRUE;
 	case IDC_KEY:
 		StoringId = ID_KEY;
-		return FALSE;
+		return TRUE;
 	case IDC_SHOP:
 		StoringId = ID_SHOP;
-		return FALSE;
+		return TRUE;
 	case IDC_BLUEGEM:
 		StoringId = ID_BLUEGEM;
-		return FALSE;
+		return TRUE;
 	case IDC_REDGEM:
 		StoringId = ID_REDGEM;
-		return FALSE;
+		return TRUE;
 	case IDC_SMALLMED:
 		StoringId = ID_SMALLMED;
-		return FALSE;
+		return TRUE;
 	case IDC_BIGMED:
 		StoringId = ID_BIGMED;
-		return FALSE;
+		return TRUE;
 	default:
-		return DefWindowProc(hWnd, msg, wparam, lparam);/*
+		return FALSE;/*
 	case IDC_GREENSLIME:
 		StoringId = ID_GREENSLIME;
-		return FALSE;
+		return TRUE;
 	case IDC_REDSLIME:
 		StoringId = ID_REDSLIME;
-		return FALSE;
+		return TRUE;
 	case IDC_BLACKSLIME:
 		StoringId = ID_BLACKSLIME;
-		return FALSE;
+		return TRUE;
 	case IDC_SKELETON:
 		StoringId = ID_SKELETON;
-		return FALSE;
+		return TRUE;
 	case IDC_SKELETONSOLDIER:
 		StoringId = ID_SKELETONSOLDIER;
-		return FALSE;
+		return TRUE;
 	case IDC_SKELETONCAPTAIN:
 		StoringId = ID_SKELETONCAPTAIN;
-		return FALSE;
+		return TRUE;
 	case IDC_SMALLBAT:
 		StoringId = ID_SMALLBAT;
-		return FALSE;
+		return TRUE;
 	case IDC_BIGBAT:
 		StoringId = ID_BIGBAT;
-		return FALSE;
+		return TRUE;
 	case IDC_REDBAT:
 		StoringId = ID_REDBAT;
-		return FALSE;*/
+		return TRUE;*/
 	}
 }
 
