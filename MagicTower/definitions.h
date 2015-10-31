@@ -1,20 +1,20 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
-#define EDITOR_X 200
-
 const int MAINWINDOW_WIDTH = 800;
 const int MAINWINDOW_HEIGHT = 630;
 
 const int FIGHT_TIMER_DELAY = 300;
 const int FIGHT_TIMER_ID = 1;
 
-const int MAP_INIT_FLOOR = 3;
+//初始位置为floor = 1
+const int MAP_INIT_FLOOR = 1;
 const int MAP_SIZE_X = 11;
 const int MAP_SIZE_Y = 11;
 
+//初始位置为x = 6，y = 10
 const int PLAYER_INIT_X = 6;
-const int PLAYER_INIT_Y = 2;
+const int PLAYER_INIT_Y = 10;
 const int PLAYER_INIT_HEALTH = 1000;
 const int PLAYER_INIT_ATTACK = 200;
 const int PLAYER_INIT_DEFENSE = 10;

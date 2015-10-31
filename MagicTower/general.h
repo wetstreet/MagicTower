@@ -53,7 +53,7 @@ void FightTimer(WindowManager *wm, Player *p, HWND hWnd, WPARAM wparam){
 	}
 }
 
-void Shopping(Player *p, WPARAM wparam, HWND hWnd){
+void ShopOnCommand(Player *p, HWND hWnd, WPARAM wparam){
 	switch (LOWORD(wparam)){
 	case IDC_EXIT:
 		EndDialog(hWnd, LOWORD(wparam));

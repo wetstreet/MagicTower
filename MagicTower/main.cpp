@@ -168,19 +168,9 @@ LRESULT CALLBACK FIGHT(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 }
 
 LRESULT CALLBACK SHOP(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
-	HDC hdc;
-	PAINTSTRUCT ps;
-
 	switch (message){
-	case WM_INITDIALOG:
-		SetFocus(GetDlgItem(hDlg, IDC_BUY_HEALTH));
-		return TRUE;
-	case WM_PAINT:
-		hdc = BeginPaint(hDlg, &ps);
-		EndPaint(hDlg, &ps);
-		return TRUE;
 	case WM_COMMAND:
-		Shopping(player, wParam, hDlg);
+		ShopOnCommand(player, hDlg, wParam);
 		windowUpdator->UpdateMainWindow();
 		return TRUE;
 	}
@@ -190,6 +180,7 @@ LRESULT CALLBACK SHOP(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 LRESULT CALLBACK EDITOR(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 	HDC hdc;
 	PAINTSTRUCT ps;
+	bool ret = false;
 
 	switch (message){
 	case WM_INITDIALOG:
@@ -198,7 +189,7 @@ LRESULT CALLBACK EDITOR(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 		windowUpdator->setHEditorWindow(hDlg);
 		return TRUE;
 	case WM_LBUTTONDOWN:
-		em->OnLButtonDown(lParam);
+		em->OnLButtonDown(hDlg, lParam);
 		windowUpdator->UpdateEditorWindow();
 		return TRUE;
 	case WM_PAINT:
@@ -207,7 +198,9 @@ LRESULT CALLBACK EDITOR(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 		EndPaint(hDlg, &ps);
 		return TRUE;
 	case WM_COMMAND:
-		return em->OnCommand(hDlg, message, wParam, lParam);
+		ret = em->OnCommand(hDlg, message, wParam, lParam);
+		windowUpdator->UpdateEditorWindow();
+		return ret;
 	case WM_CLOSE:
 		EndDialog(hDlg, LOWORD(wParam));
 		return TRUE;
@@ -216,21 +209,15 @@ LRESULT CALLBACK EDITOR(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
 }
 
 LRESULT CALLBACK ABOUT(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam){
-	HDC hdc;
-	PAINTSTRUCT ps;
-
 	switch (message){
-	case WM_INITDIALOG:
-		return TRUE;
-	case WM_PAINT:
-		hdc = BeginPaint(hDlg, &ps);
-		EndPaint(hDlg, &ps);
-		return TRUE;
 	case WM_COMMAND:
 		if (LOWORD(wParam) == IDOK){
 			EndDialog(hDlg, LOWORD(wParam));
 			return TRUE;
 		}
+	case WM_CLOSE:
+		EndDialog(hDlg, LOWORD(wParam));
+		return TRUE;
 		break;
 	}
 	return FALSE;
