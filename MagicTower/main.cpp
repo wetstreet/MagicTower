@@ -75,7 +75,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow){
 	hWnd = CreateWindowEx(NULL,
 		szWindowClass,
 		szTitle,
-		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE,
 		x / 2 - MAINWINDOW_WIDTH / 2,
 		y / 2 - MAINWINDOW_HEIGHT / 2,
 		MAINWINDOW_WIDTH,
@@ -91,9 +91,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow){
 	return TRUE;
 }
 
+int dir = 0;
+void MainOnTimer(){
+	manager->OnKeyDown(dir, mm, wm);
+	windowUpdator->UpdateMainWindow();
+}
+
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 	PAINTSTRUCT ps;
-	HDC hdc;
+	HDC hDC, hDCMem;
+	HBITMAP hOrgBmp, hOldBmp;
+	static bool flag = false;
 
 	switch (message){
 	case WM_CREATE:
@@ -106,16 +114,39 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		player = manager->getPlayer();
 		return 0;
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
-		manager->DrawMap(hdc, mm);
-		manager->PrintPlayerInfo(hdc);
+		hDC = BeginPaint(hWnd, &ps);
+		//创建与当前DC兼容的内存DC
+		hDCMem = CreateCompatibleDC(hDC);
+		hOrgBmp = LoadBitmap(hIns, MAKEINTRESOURCE(IDB_BACKGROUND));
+		//将该位图选入到内存DC中
+		hOldBmp = (HBITMAP)SelectObject(hDCMem, hOrgBmp);
+		//在缓冲区中绘图
+		manager->DrawMap(hDCMem, mm);
+		manager->PrintPlayerInfo(hDCMem);
+		//将缓冲区图像复制到显示缓冲区
+		BitBlt(hDC, 0, 0, 800, 630, hDCMem, 0, 0, SRCCOPY);
+		SelectObject(hDCMem, hOldBmp);
+		//释放资源
+		DeleteDC(hDCMem);
 		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_KEYDOWN:
-		manager->OnKeyDown(wParam, mm, wm);
-		windowUpdator->UpdateMainWindow();
+		wm->PlayerCanWalk = true;
+		if (!flag){
+			flag = true;
+			dir = manager->GetDirection(wParam);
+			manager->OnKeyDown(dir, mm, wm);
+			windowUpdator->UpdateMainWindow();
+			SetTimer(hWnd, MAIN_TIMER_ID, MAIN_TIMER_DELAY, (TIMERPROC)MainOnTimer);
+		}
+		return 0;
+	case WM_KEYUP:
+		wm->PlayerCanWalk = false;
+		flag = false;
+		KillTimer(hWnd, MAIN_TIMER_ID);
 		return 0;
 	case WM_COMMAND:
+		//若处理消息则返回0，未处理消息则由DefWindowProc处理
 		switch (LOWORD(wParam)){
 		case IDM_ABOUT:
 			DialogBox(hIns, (LPCTSTR)IDD_ABOUT, hWnd, (DLGPROC)ABOUT);

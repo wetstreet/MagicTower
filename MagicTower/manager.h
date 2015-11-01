@@ -92,7 +92,8 @@ public:
 	bool AddElement(int id, UINT resourceId, int type, int health = 0, int attack = 0, int defense = 0, int money = 0);
 	void DrawMap(HDC hdc, MapManager *mm);
 	void PrintPlayerInfo(HDC hdc);
-	void OnKeyDown(WPARAM wparam, MapManager *map, WindowManager *wm);
+	void OnKeyDown(int dir, MapManager *map, WindowManager *wm);
+	int GetDirection(WPARAM wParam);
 private:
 	int length;
 	node *head;
@@ -195,29 +196,45 @@ void Manager::PrintPlayerInfo(HDC hdc){
 	TextOut(hdc, 650, 160, s.c_str(), s.length());
 }
 
-void Manager::OnKeyDown(WPARAM wparam, MapManager *map, WindowManager *wm){
+int Manager::GetDirection(WPARAM wParam){
+	switch (wParam){
+	case VK_UP:
+		return DIR_UP;
+	case VK_DOWN:
+		return DIR_DOWN;
+	case VK_LEFT:
+		return DIR_LEFT;
+	case VK_RIGHT:
+		return DIR_RIGHT;
+	}
+	return -1;
+}
+
+void Manager::OnKeyDown(int dir, MapManager *map, WindowManager *wm){
 	Player *p = getPlayer();
 	int x = p->getX();
 	int y = p->getY();
 	int currentFloor = map->getCurrentFloor();
 
-	switch (wparam){
-	case VK_UP:
+	if (!wm->PlayerCanWalk) return;
+
+	switch (dir){
+	case DIR_UP:
 		if (y > 1){
 			Search(map->getNumber(currentFloor, x, y - 1))->MeetPlayer(currentFloor, x, y - 1, p, map, wm);
 		}
 		break;
-	case VK_DOWN:
+	case DIR_DOWN:
 		if (y < MAP_SIZE_Y){
 			Search(map->getNumber(currentFloor, x, y + 1))->MeetPlayer(currentFloor, x, y + 1, p, map, wm);
 		}
 		break;
-	case VK_LEFT:
+	case DIR_LEFT:
 		if (x > 1){
 			Search(map->getNumber(currentFloor, x - 1, y))->MeetPlayer(currentFloor, x - 1, y, p, map, wm);
 		}
 		break;
-	case VK_RIGHT:
+	case DIR_RIGHT:
 		if (x < MAP_SIZE_X){
 			Search(map->getNumber(currentFloor, x + 1, y))->MeetPlayer(currentFloor, x + 1, y, p, map, wm);
 		}

@@ -7,6 +7,9 @@ const int MAINWINDOW_HEIGHT = 630;
 const int FIGHT_TIMER_DELAY = 300;
 const int FIGHT_TIMER_ID = 1;
 
+const int MAIN_TIMER_ID = 1;
+const int MAIN_TIMER_DELAY = 150;
+
 //≥ı ºŒª÷√Œ™floor = 1
 const int MAP_INIT_FLOOR = 1;
 const int MAP_SIZE_X = 11;
@@ -21,10 +24,10 @@ const int PLAYER_INIT_DEFENSE = 10;
 const int PLAYER_INIT_MONEY = 200;
 const int PLAYER_INIT_KEY = 20;
 
-const int UP = 0;
-const int DOWN = 1;
-const int LEFT = 2;
-const int RIGHT = 3;
+const int DIR_UP = 0;
+const int DIR_DOWN = 1;
+const int DIR_LEFT = 2;
+const int DIR_RIGHT = 3;
 
 const int ID_PLAYER = -2;
 const int ID_BACKGROUND = -1;

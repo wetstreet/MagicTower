@@ -45,6 +45,8 @@ bool Enemy::calcDamage(Player *p){
 
 void Enemy::MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){
 	if (calcDamage((Player *)p)){
+		wm->KillMainTimer(MAIN_TIMER_ID);
+		wm->PlayerCanWalk = false;
 		wm->CallFight(getId(), health, attack, defense, money);
 		mm->setNumber(floor, x, y, 0);
 	}

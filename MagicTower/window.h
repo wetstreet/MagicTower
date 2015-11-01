@@ -14,6 +14,7 @@ class WindowManager{
 public:
 	WindowManager(HINSTANCE hIns, HWND hMain) :hInstance(hIns), hMainWindow(hMain){}
 	HWND getMainHandle(){ return hMainWindow; }
+	void KillMainTimer(int TimerID){ KillTimer(hMainWindow, TimerID); }
 	void CallFight(int id, int health, int attack, int defense, int money);
 	void CallShop();
 	int getEnemyId(){ return enemyId; }
@@ -22,6 +23,7 @@ public:
 	int getEnemyAttack()const{ return enemyAttack; }
 	int getEnemyDefense()const{ return enemyDefense; }
 	int getEnemyMoney()const{ return enemyMoney; }
+	bool PlayerCanWalk = true;
 private:
 	HINSTANCE hInstance;
 	HWND hMainWindow;

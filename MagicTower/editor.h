@@ -51,7 +51,7 @@ void EditorManager::OnLoad(HWND hWnd){
 	string path;
 
 	path = ItemTextToString(hWnd, IDC_FILE);
-	fs.open(path, ios::_Nocreate|ios::in);
+	fs.open(path, ios::_Nocreate | ios::in);
 
 	if (fs){
 		for (int y = 0; y < 11; y++){
@@ -72,12 +72,12 @@ void EditorManager::OnSave(HWND hWnd){
 	string path;
 
 	path = ItemTextToString(hWnd, IDC_FILE);
-	fs.open(path, ios::_Nocreate|ios::in|ios::trunc);
+	fs.open(path, ios::_Nocreate | ios::out | ios::trunc);
 
 	if (fs){
 		for (int y = 0; y < 11; y++){
 			for (int x = 0; x < 11; x++){
-				fs << map[y][x];
+				fs << map[y][x] << " ";
 			}
 			fs << "\n";
 		}
