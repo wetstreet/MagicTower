@@ -23,7 +23,6 @@ public:
 	int getEnemyAttack()const{ return enemyAttack; }
 	int getEnemyDefense()const{ return enemyDefense; }
 	int getEnemyMoney()const{ return enemyMoney; }
-	bool PlayerCanWalk = true;
 private:
 	HINSTANCE hInstance;
 	HWND hMainWindow;

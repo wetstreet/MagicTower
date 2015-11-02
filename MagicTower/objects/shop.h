@@ -13,7 +13,6 @@ public:
 
 void Shop::MeetPlayer(int floor, int x, int y, Object *p, MapManager *mm, WindowManager *wm){
 	Player *player = (Player *)p;
-	wm->KillMainTimer(MAIN_TIMER_ID);
 	wm->CallShop();
 }
 

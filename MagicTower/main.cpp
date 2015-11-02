@@ -91,17 +91,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow){
 	return TRUE;
 }
 
-int dir = 0;
-void MainOnTimer(){
-	manager->OnKeyDown(dir, mm, wm);
-	windowUpdator->UpdateMainWindow();
-}
-
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
 	PAINTSTRUCT ps;
 	HDC hDC, hDCMem;
 	HBITMAP hOrgBmp, hOldBmp;
-	static bool flag = false;
 
 	switch (message){
 	case WM_CREATE:
@@ -131,19 +124,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_KEYDOWN:
-		wm->PlayerCanWalk = true;
-		if (!flag){
-			flag = true;
-			dir = manager->GetDirection(wParam);
-			manager->OnKeyDown(dir, mm, wm);
-			windowUpdator->UpdateMainWindow();
-			SetTimer(hWnd, MAIN_TIMER_ID, MAIN_TIMER_DELAY, (TIMERPROC)MainOnTimer);
-		}
-		return 0;
-	case WM_KEYUP:
-		wm->PlayerCanWalk = false;
-		flag = false;
-		KillTimer(hWnd, MAIN_TIMER_ID);
+		manager->OnKeyDown(manager->GetDirection(wParam), mm, wm);
+		windowUpdator->UpdateMainWindow();
 		return 0;
 	case WM_COMMAND:
 		//若处理消息则返回0，未处理消息则由DefWindowProc处理

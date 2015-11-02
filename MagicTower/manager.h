@@ -11,16 +11,16 @@
 #include "player.h"
 #include "enemy.h"
 
-#include "road.h"
-#include "upstairs.h"
-#include "downstairs.h"
-#include "door.h"
-#include "key.h"
-#include "shop.h"
-#include "bluegem.h"
-#include "redgem.h"
-#include "smallmed.h"
-#include "bigmed.h"
+#include "objects/road.h"
+#include "objects/upstairs.h"
+#include "objects/downstairs.h"
+#include "objects/door.h"
+#include "objects/key.h"
+#include "objects/shop.h"
+#include "objects/bluegem.h"
+#include "objects/redgem.h"
+#include "objects/smallmed.h"
+#include "objects/bigmed.h"
 using namespace std;
 
 //结点保存object类对象，object类中包含位图及对应的名字
@@ -215,8 +215,6 @@ void Manager::OnKeyDown(int dir, MapManager *map, WindowManager *wm){
 	int x = p->getX();
 	int y = p->getY();
 	int currentFloor = map->getCurrentFloor();
-
-	if (!wm->PlayerCanWalk) return;
 
 	switch (dir){
 	case DIR_UP:
